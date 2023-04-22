@@ -59,6 +59,7 @@ app.post('/api/chat', async (req, res) => {
     res.end(JSON.stringify(openaiRes.data.choices[0]));
   } catch (e) {
     console.log('请求openai出错');
+    log('system', ':', message.content);
     res.end({
       error: true,
       errorMsg: '请求openai出错'
