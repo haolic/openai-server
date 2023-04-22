@@ -42,12 +42,12 @@ app.get('/api/chat', async (req, res) => {
 
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
+  console.log(message);
   try {
     const openaiRes = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [message],
     });
-
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data))
     }
