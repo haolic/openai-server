@@ -1,6 +1,7 @@
 import express from 'express';
 import { OpenAIApi, Configuration } from 'openai';
 import bodyParser from 'body-parser';
+import { log } from './utils.js';
 
 const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -24,11 +25,13 @@ app.all('*', function (req, res, next) {
 app.get('/api/chat', async (req, res) => {
   const { input } = req.query;
   console.log('输入', input);
+  log('user:', input)
   try {
     const openaiRes = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: input }],
     });
+    log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content)
     res.end(JSON.stringify(openaiRes.data.choices[0]));
     return;
   } catch (e) {
@@ -43,6 +46,7 @@ app.get('/api/chat', async (req, res) => {
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
   console.log(message);
+  log(message.role, ':', message.content)
   try {
     const openaiRes = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
@@ -51,6 +55,7 @@ app.post('/api/chat', async (req, res) => {
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data))
     }
+    log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content)
     res.end(JSON.stringify(openaiRes.data.choices[0]));
   } catch (e) {
     console.log('请求openai出错');
