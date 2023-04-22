@@ -22,26 +22,26 @@ app.all('*', function (req, res, next) {
   next();
 });
 
-app.get('/api/chat', async (req, res) => {
-  const { input } = req.query;
-  console.log('输入', input);
-  log('user:', input)
-  try {
-    const openaiRes = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: input }],
-    });
-    log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content)
-    res.end(JSON.stringify(openaiRes.data.choices[0]));
-    return;
-  } catch (e) {
-    console.log('请求openai出错', e);
-    res.end({
-      error: true,
-      errorMsg: '请求openai出错'
-    })
-  }
-});
+// app.get('/api/chat', async (req, res) => {
+//   const { input } = req.query;
+//   console.log('输入', input);
+//   log('user:', input)
+//   try {
+//     const openaiRes = await openai.createChatCompletion({
+//       model: 'gpt-3.5-turbo',
+//       messages: [{ role: 'user', content: input }],
+//     });
+//     log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content)
+//     res.end(JSON.stringify(openaiRes.data.choices[0]));
+//     return;
+//   } catch (e) {
+//     console.log('请求openai出错', e);
+//     res.end({
+//       error: true,
+//       errorMsg: '请求openai出错'
+//     })
+//   }
+// });
 
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
