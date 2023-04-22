@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@umijs/fabric": "^2.14.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "openai": "^3.2.1"
+  }
+}
