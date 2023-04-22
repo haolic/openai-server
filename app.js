@@ -29,15 +29,15 @@ app.get('/api/chat', async (req, res) => {
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: input }],
     });
-
-    if (openaiRes.data.error) {
-      res.end(JSON.stringify(openaiRes.data))
-    }
+    res.end(JSON.stringify(openaiRes.data.choices[0]));
+    return;
   } catch (e) {
-    console.log('请求openai出错');
+    console.log('请求openai出错', e);
+    res.end({
+      error: true,
+      errorMsg: '请求openai出错'
+    })
   }
-  res.end(JSON.stringify(openaiRes.data.choices[0]));
-  res.end(input);
 });
 
 app.post('/api/chat', async (req, res) => {
@@ -51,10 +51,14 @@ app.post('/api/chat', async (req, res) => {
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data))
     }
+    res.end(JSON.stringify(openaiRes.data.choices[0]));
   } catch (e) {
     console.log('请求openai出错');
+    res.end({
+      error: true,
+      errorMsg: '请求openai出错'
+    })
   }
-  res.end(JSON.stringify(openaiRes.data.choices[0]));
 });
 
 app.listen(3000, () => {
