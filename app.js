@@ -21,6 +21,25 @@ app.all('*', function (req, res, next) {
   next();
 });
 
+app.get('/api/chat', async (req, res) => {
+  const { input } = req.query;
+  console.log('输入', input);
+  try {
+    const openaiRes = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: input }],
+    });
+
+    if (openaiRes.data.error) {
+      res.end(JSON.stringify(openaiRes.data))
+    }
+  } catch (e) {
+    console.log('请求openai出错');
+  }
+  res.end(JSON.stringify(openaiRes.data.choices[0]));
+  res.end(input);
+});
+
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
   try {
