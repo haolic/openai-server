@@ -34,7 +34,7 @@ app.post('/api/chat', async (req, res) => {
 
 app.get('/api/chat', async (req, res) => {
   const { input } = req.query;
-  console.log('input', message)
+  console.log('input', input)
   const openaiRes = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
     messages: [{ role: 'user', message: input }],
