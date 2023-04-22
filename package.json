@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "node app.js"
+  },
   "type": "module",
   "dependencies": {
     "@umijs/fabric": "^2.14.1",
