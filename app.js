@@ -32,17 +32,6 @@ app.post('/api/chat', async (req, res) => {
   res.end(JSON.stringify(openaiRes.data.choices[0]));
 });
 
-app.get('/api/chat', async (req, res) => {
-  const { input } = req.query;
-  console.log('input', input)
-  const openaiRes = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
-    messages: [{ role: 'user', message: input }],
-  });
-
-  res.end(JSON.stringify(openaiRes.data.choices[0]));
-});
-
 app.listen(3000, () => {
   console.log('Server started on port 3000');
 });
