@@ -23,12 +23,18 @@ app.all('*', function (req, res, next) {
 
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
-  console.log('input', message)
-  const openaiRes = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
-    messages: [message],
-  });
+  try {
+    const openaiRes = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [message],
+    });
 
+    if (openaiRes.data.error) {
+      res.end(JSON.stringify(openaiRes.data))
+    }
+  } catch (e) {
+    console.log('请求openai出错');
+  }
   res.end(JSON.stringify(openaiRes.data.choices[0]));
 });
 
