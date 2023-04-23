@@ -30,8 +30,8 @@ const logMessage = async (uid, message) => {
       encoding: 'utf8',
     });
   } catch (err) {
-    console.log(err);
-    writeFile(`./${messageHistoryDirStr}/${uid}.txt`, JSON.stringify([message]), {
+    console.log('logMessage', err);
+    await writeFile(`./${messageHistoryDirStr}/${uid}.txt`, JSON.stringify([message]), {
       encoding: 'utf8',
     });
   }
