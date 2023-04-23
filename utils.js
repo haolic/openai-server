@@ -40,7 +40,7 @@ const logMessage = async (uid, message) => {
     console.log(22222, JSON.stringify([message]));
     const res = await writeFile(
       path.join(__dirname, `./${messageHistoryDirStr}/${uid}.txt`),
-      JSON.stringify([message]),
+      '[]',
       {
         encoding: 'utf8',
       },
