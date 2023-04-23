@@ -39,7 +39,6 @@ router.post('/chat', async (req, res) => {
     log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content);
     res.end(JSON.stringify(openaiRes.data));
   } catch (e) {
-    console.log('请求openai出错');
     log('system', '请求openai出错:', message.content);
     res.end({
       error: true,
