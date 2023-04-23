@@ -26,7 +26,7 @@ router.post('/chat', async (req, res) => {
   try {
     listJson = await readFile(path.join(__dirname, `../${messageHistoryDirStr}/${uid}.txt`));
   } catch (e) {
-    console.log(e);
+    console.log('listJson', e);
   }
 
   let listArr = JSON.parse(listJson);
