@@ -1,8 +1,11 @@
 const express = require('express');
+const { readFile } = require('node:fs/promises');
 const { OpenAIApi, Configuration } = require('openai');
+const path = require('path');
+const dayjs = require('dayjs');
 const _ = require('lodash');
 const router = express.Router();
-const { log, logMessage } = require('../utils.js');
+const { log, logMessage, messageHistoryDirStr } = require('../utils.js');
 
 const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -46,7 +49,14 @@ router.post('/chat', async (req, res) => {
 });
 
 router.get('/history', async (req, res) => {
-  res.end(JSON.stringify(messageList));
+  const today = dayjs().format('YYYY-MM-DD');
+  try {
+    const list = await readFile(path.join(__dirname, `../${messageHistoryDirStr}/${today}.txt`));
+    res.end(list);
+  } catch (e) {
+    console.log(2222, e);
+    res.end([]);
+  }
 });
 
 // router.get('/chat', async (req, res) => {

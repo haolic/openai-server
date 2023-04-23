@@ -1,6 +1,8 @@
 const { readFile, writeFile } = require('node:fs/promises');
 const dayjs = require('dayjs');
 
+const messageHistoryDirStr = 'message-history';
+
 const log = async (...text) => {
   const today = dayjs().format('YYYY-MM-DD');
   try {
@@ -18,14 +20,15 @@ const log = async (...text) => {
 const logMessage = async (msgItem) => {
   const today = dayjs().format('YYYY-MM-DD');
   try {
-    const contents = await readFile(`./messageHistory/${today}.txt`, { encoding: 'utf8' });
+    const contents = await readFile(`./${messageHistoryDirStr}/${today}.txt`, { encoding: 'utf8' });
     const list = JSON.parse(contents);
     list.push(msgItem);
 
-    await writeFile(`./messageHistory/${today}.txt`, JSON.stringify(list));
+    await writeFile(`./${messageHistoryDirStr}/${today}.txt`, JSON.stringify(list));
   } catch (err) {
-    writeFile(`./messageHistory/${today}.txt`, `${dayjs().format('HH:mm:ss')}}信息记录错误`);
+    console.log(err);
+    writeFile(`./${messageHistoryDirStr}/${today}.txt`, JSON.stringify([]));
   }
 };
 
-module.exports = { log, logMessage };
+module.exports = { log, logMessage, messageHistoryDirStr };
