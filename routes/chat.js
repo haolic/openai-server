@@ -37,6 +37,7 @@ router.post('/chat', async (req, res) => {
       messages: listArr,
       ...config,
     });
+    console.log(openaiRes.data);
 
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data));
@@ -47,7 +48,7 @@ router.post('/chat', async (req, res) => {
     res.end(JSON.stringify({ ...openaiRes.data, messageUid: uid }));
   } catch (e) {
     log('system', '请求openai出错:', message.content);
-    console.log(e.data);
+    console.log(e);
     res.end(JSON.stringify({
       error: true,
       errorMsg: '请求openai出错',
