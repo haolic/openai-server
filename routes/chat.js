@@ -20,6 +20,10 @@ router.post('/chat', async (req, res) => {
   log(message.role, ' post:', message.content);
   logMessage(message);
   messageList.push(message);
+  if (message.content === '忘掉前边所有对话。') {
+    messageList = [message];
+  }
+
   let sendMsgList = messageList;
   if (messageList.length > 16) {
     sendMsgList = _.takeRight(sendMsgList, 16);
