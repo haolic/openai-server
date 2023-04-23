@@ -21,10 +21,12 @@ router.post('/chat', async (req, res) => {
   let uid = messageUid || uuid();
 
   await logMessage(uid, message);
-  console.log('ahhahhahhhahahahahh');
+
   let listJson = '[]';
   try {
-    listJson = await readFile(path.join(__dirname, `../${messageHistoryDirStr}/${uid}.txt`));
+    listJson = await readFile(path.join(__dirname, `../${messageHistoryDirStr}/${uid}.txt`), {
+      encoding: 'utf8',
+    });
   } catch (e) {
     console.log('listJson', e);
   }
@@ -37,7 +39,6 @@ router.post('/chat', async (req, res) => {
       messages: listArr,
       ...config,
     });
-    console.log(3333, openaiRes);
 
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data));
@@ -50,10 +51,12 @@ router.post('/chat', async (req, res) => {
   } catch (e) {
     log('system', '请求openai出错:', message.content);
     console.log(e);
-    res.end(JSON.stringify({
-      error: true,
-      errorMsg: '请求openai出错',
-    }));
+    res.end(
+      JSON.stringify({
+        error: true,
+        errorMsg: '请求openai出错',
+      }),
+    );
   }
 });
 

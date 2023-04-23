@@ -31,19 +31,9 @@ const logMessage = async (uid, message) => {
       encoding: 'utf8',
     });
   } catch (err) {
-    console.log('logMessage', err);
-    console.log('logMessage----', JSON.stringify([message]));
-    await new Promise((res, rej) => {
-      writeFileFs(
-        `./${messageHistoryDirStr}/${uid}.txt`,
-        JSON.stringify([message]),
-        {
-          encoding: 'utf8',
-        },
-        (err) => {
-          res();
-        },
-      );
+    console.log(JSON.stringify([message]))
+    await writeFile(`./${messageHistoryDirStr}/${uid}.txt`, JSON.stringify([message]), {
+      encoding: 'utf8',
     });
   }
 };
