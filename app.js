@@ -12,7 +12,7 @@ app.engine('html', ejs.__express);
 app.set('view engine', 'html');
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // 临时解决跨域
 app.all('*', function (req, res, next) {
