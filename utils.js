@@ -1,4 +1,5 @@
 const { readFile, writeFile } = require('node:fs/promises');
+const { writeFile: writeFileFs } = require('fs');
 const _ = require('lodash');
 const dayjs = require('dayjs');
 
@@ -32,8 +33,17 @@ const logMessage = async (uid, message) => {
   } catch (err) {
     console.log('logMessage', err);
     console.log('logMessage----', JSON.stringify([message]));
-    await writeFile(`./${messageHistoryDirStr}/${uid}.txt`, JSON.stringify([message]), {
-      encoding: 'utf8',
+    await new Promise((res, rej) => {
+      writeFileFs(
+        `./${messageHistoryDirStr}/${uid}.txt`,
+        JSON.stringify([message]),
+        {
+          encoding: 'utf8',
+        },
+        (err) => {
+          res();
+        },
+      );
     });
   }
 };
