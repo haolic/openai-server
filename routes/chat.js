@@ -10,12 +10,13 @@ const config = new Configuration({
 const openai = new OpenAIApi(config);
 
 router.post('/chat', async (req, res) => {
-  const { message } = req.body;
+  const { message, ...config } = req.body;
   log(message.role, ' post:', message.content);
   try {
     const openaiRes = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [message],
+      ...config,
     });
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data));
