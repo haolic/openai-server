@@ -37,10 +37,11 @@ router.post('/chat', async (req, res) => {
       messages: listArr,
       ...config,
     });
-    console.log(openaiRes.data);
+    console.log(3333, openaiRes);
 
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data));
+      return;
     }
 
     await logMessage(uid, openaiRes.data.choices[0].message);
