@@ -22,7 +22,7 @@ router.post('/chat', async (req, res) => {
       res.end(JSON.stringify(openaiRes.data));
     }
     log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content);
-    res.end(JSON.stringify(openaiRes.data.choices[0]));
+    res.end(JSON.stringify(openaiRes.data));
   } catch (e) {
     console.log('请求openai出错');
     log('system', '请求openai出错:', message.content);
@@ -43,7 +43,7 @@ router.post('/chat', async (req, res) => {
 //       messages: [{ role: 'user', content: input }],
 //     });
 //     log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content);
-//     res.end(JSON.stringify(openaiRes.data.choices[0]));
+//     res.end(JSON.stringify(openaiRes.data));
 //     return;
 //   } catch (e) {
 //     console.log('请求openai出错', e);
