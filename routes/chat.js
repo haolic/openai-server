@@ -1,5 +1,6 @@
 const express = require('express');
 const { OpenAIApi, Configuration } = require('openai');
+const _ = require('lodash');
 const router = express.Router();
 const { log } = require('../utils.js');
 
@@ -9,18 +10,27 @@ const config = new Configuration({
 
 const openai = new OpenAIApi(config);
 
+const messageList = [];
+
 router.post('/chat', async (req, res) => {
   const { message, ...config } = req.body;
   log(message.role, ' post:', message.content);
+  messageList.push(message);
+  let sendMsgList = messageList;
+  if (messageList.length > 16) {
+    sendMsgList = _.takeRight(sendMsgList, 16);
+  }
   try {
     const openaiRes = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
-      messages: [message],
+      messages: sendMsgList,
       ...config,
     });
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data));
     }
+
+    messageList.push(openaiRes.data.choices[0].message);
     log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content);
     res.end(JSON.stringify(openaiRes.data));
   } catch (e) {
