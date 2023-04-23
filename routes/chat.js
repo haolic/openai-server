@@ -2,7 +2,7 @@ const express = require('express');
 const { OpenAIApi, Configuration } = require('openai');
 const _ = require('lodash');
 const router = express.Router();
-const { log } = require('../utils.js');
+const { log, logMessage } = require('../utils.js');
 
 const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,6 +15,7 @@ const messageList = [];
 router.post('/chat', async (req, res) => {
   const { message, ...config } = req.body;
   log(message.role, ' post:', message.content);
+  logMessage(message);
   messageList.push(message);
   let sendMsgList = messageList;
   if (messageList.length > 16) {
@@ -31,6 +32,7 @@ router.post('/chat', async (req, res) => {
     }
 
     messageList.push(openaiRes.data.choices[0].message);
+    logMessage(openaiRes.data.choices[0].message);
     log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content);
     res.end(JSON.stringify(openaiRes.data));
   } catch (e) {
@@ -41,6 +43,10 @@ router.post('/chat', async (req, res) => {
       errorMsg: '请求openai出错',
     });
   }
+});
+
+router.get('/history', async (req, res) => {
+  res.end(JSON.stringify(messageList));
 });
 
 // router.get('/chat', async (req, res) => {

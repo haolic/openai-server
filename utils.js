@@ -15,4 +15,17 @@ const log = async (...text) => {
   }
 };
 
-module.exports = { log };
+const logMessage = async (msgItem) => {
+  const today = dayjs().format('YYYY-MM-DD');
+  try {
+    const contents = await readFile(`./messageHistory/${today}.txt`, { encoding: 'utf8' });
+    const list = JSON.parse(contents);
+    list.push(msgItem);
+
+    await writeFile(`./messageHistory/${today}.txt`, JSON.stringify(list));
+  } catch (err) {
+    writeFile(`./messageHistory/${today}.txt`, `${dayjs().format('HH:mm:ss')}}信息记录错误`);
+  }
+};
+
+module.exports = { log, logMessage };
