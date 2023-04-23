@@ -3,6 +3,7 @@ const { readFile } = require('node:fs/promises');
 const { OpenAIApi, Configuration } = require('openai');
 const path = require('path');
 const dayjs = require('dayjs');
+const uuid = require('uuid').v4;
 const _ = require('lodash');
 const router = express.Router();
 const { log, logMessage, messageHistoryDirStr } = require('../utils.js');
@@ -13,35 +14,37 @@ const config = new Configuration({
 
 const openai = new OpenAIApi(config);
 
-let messageList = [];
+// let messageList = [];
 
 router.post('/chat', async (req, res) => {
-  const { message, ...config } = req.body;
-  log(message.role, ' post:', message.content);
-  logMessage(message);
-  messageList.push(message);
-  if (message.content === '忘掉前边所有对话。') {
-    messageList = [message];
+  const { message, messageUid, ...config } = req.body;
+  let uid = messageUid || uuid();
+
+  await logMessage(uid, message);
+
+  let listJson = '[]';
+  try {
+    listJson = await readFile(path.join(__dirname, `../${messageHistoryDirStr}/${uid}.txt`));
+  } catch (e) {
+    console.log(e);
   }
 
-  let sendMsgList = messageList;
-  if (messageList.length > 16) {
-    sendMsgList = _.takeRight(sendMsgList, 16);
-  }
+  let listArr = JSON.parse(listJson);
+
   try {
     const openaiRes = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
-      messages: sendMsgList,
+      messages: listArr,
       ...config,
     });
+
     if (openaiRes.data.error) {
       res.end(JSON.stringify(openaiRes.data));
     }
 
-    messageList.push(openaiRes.data.choices[0].message);
-    logMessage(openaiRes.data.choices[0].message);
-    log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content);
-    res.end(JSON.stringify(openaiRes.data));
+    await logMessage(uid, openaiRes.data.choices[0].message);
+
+    res.end(JSON.stringify({ ...openaiRes.data, messageUid: uid }));
   } catch (e) {
     log('system', '请求openai出错:', message.content);
     res.end({
@@ -52,35 +55,20 @@ router.post('/chat', async (req, res) => {
 });
 
 router.get('/history', async (req, res) => {
-  const today = dayjs().format('YYYY-MM-DD');
+  const { messageUid } = req.query;
   try {
-    const list = await readFile(path.join(__dirname, `../${messageHistoryDirStr}/${today}.txt`));
-    res.end(list);
+    if (messageUid) {
+      const list = await readFile(
+        path.join(__dirname, `../${messageHistoryDirStr}/${messageUid}.txt`),
+      );
+      res.end(list);
+    } else {
+      res.end('[]');
+    }
   } catch (e) {
-    console.log(2222, e);
-    res.end([]);
+    console.log(e);
+    res.end('[]');
   }
 });
-
-// router.get('/chat', async (req, res) => {
-//   const { input } = req.query;
-//   console.log('get输入:', input);
-//   log('user:', input);
-//   try {
-//     const openaiRes = await openai.createChatCompletion({
-//       model: 'gpt-3.5-turbo',
-//       messages: [{ role: 'user', content: input }],
-//     });
-//     log(openaiRes.data.choices[0].message.role, ':', openaiRes.data.choices[0].message.content);
-//     res.end(JSON.stringify(openaiRes.data));
-//     return;
-//   } catch (e) {
-//     console.log('请求openai出错', e);
-//     res.end({
-//       error: true,
-//       errorMsg: '请求openai出错',
-//     });
-//   }
-// });
 
 module.exports = router;
