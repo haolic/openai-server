@@ -13,7 +13,7 @@ const config = new Configuration({
 
 const openai = new OpenAIApi(config);
 
-const messageList = [];
+let messageList = [];
 
 router.post('/chat', async (req, res) => {
   const { message, ...config } = req.body;
