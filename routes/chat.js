@@ -2,7 +2,6 @@ const express = require('express');
 const { readFile } = require('node:fs/promises');
 const { OpenAIApi, Configuration } = require('openai');
 const path = require('path');
-const dayjs = require('dayjs');
 const uuid = require('uuid').v4;
 const _ = require('lodash');
 const router = express.Router();

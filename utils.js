@@ -24,7 +24,7 @@ const logMessage = async (uid, message) => {
     const contents = await readFile(`./${messageHistoryDirStr}/${uid}.txt`, { encoding: 'utf8' });
     let list = JSON.parse(contents || '[]');
     list.push(message);
-    list = _.takeRight(list, 40);
+    list = _.takeRight(list, 18);
 
     await writeFile(`./${messageHistoryDirStr}/${uid}.txt`, JSON.stringify(list), {
       encoding: 'utf8',
