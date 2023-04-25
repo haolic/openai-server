@@ -77,7 +77,9 @@ router.post('/chat', async (req, res) => {
           if (messageContent) {
             content += messageContent;
           }
-          res.write(messageContent);
+          if (messageContent) {
+            res.write(messageContent);
+          }
         }
       }
     });
