@@ -17,13 +17,13 @@ const openai = new OpenAIApi(config);
 
 router.post('/chat', async (req, res) => {
   const { messageUid } = req.header;
+  let uid = messageUid || uuid();
   res.set({
     'Content-Type': 'text/event-stream',
-    messageUid,
+    messageUid: uid,
   });
   const { message, ...config } = req.body;
   console.log('接收', message);
-  let uid = messageUid || uuid();
   if (message.content?.length > 700) {
     res.end(
       JSON.stringify({
