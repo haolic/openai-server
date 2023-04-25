@@ -57,7 +57,8 @@ router.post('/chat', async (req, res) => {
     let role = '';
     let content = '';
     openaiRes.data.on('data', (dataStr) => {
-      const arr = dataStr.split('\n\n');
+
+      const arr = dataStr.toString().split('\n\n');
       for (let index = 0; index < arr.length; index++) {
         let element = arr[index];
         if (element) {
