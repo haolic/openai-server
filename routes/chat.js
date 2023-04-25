@@ -16,7 +16,7 @@ const openai = new OpenAIApi(config);
 // let messageList = [];
 
 router.post('/chat', async (req, res) => {
-  const { messageUid } = req.header;
+  const { messageUid } = req.headers;
   let uid = messageUid || uuid();
 
   const { message, ...config } = req.body;
