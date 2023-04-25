@@ -83,12 +83,11 @@ router.post('/chat', async (req, res) => {
     await logMessage(uid, { role, content });
   } catch (e) {
     log('system', '请求openai出错:', message.content);
-    console.log(e.response.data.error);
+    console.log(e);
     res.end(
       JSON.stringify({
         error: true,
         errorMsg: '请求openai出错',
-        errorContent: e.response.data,
       }),
     );
   }
