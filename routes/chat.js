@@ -64,7 +64,7 @@ router.post('/chat', async (req, res) => {
         let element = arr[index];
         if (element) {
           if (element === 'data: [DONE]') {
-            res.end('done');
+            res.end('^d^o^n^e^');
             return;
           }
           element = element.replace('data: ', '');
