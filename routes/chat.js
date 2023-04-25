@@ -17,6 +17,10 @@ const openai = new OpenAIApi(config);
 
 router.post('/chat', async (req, res) => {
   const { messageUid } = req.header;
+  res.set({
+    'Content-Type': 'text/event-stream',
+    messageUid,
+  });
   const { message, ...config } = req.body;
   console.log('接收', message);
   let uid = messageUid || uuid();
