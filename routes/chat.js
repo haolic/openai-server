@@ -22,7 +22,7 @@ router.post('/chat', async (req, res) => {
     res.end(
       JSON.stringify({
         error: true,
-        errorMsg: '发送字数不能超700',
+        errorMsg: '发送字数不能超700。',
         errorContent: '发送字数不能超700',
       }),
     );
