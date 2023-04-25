@@ -43,7 +43,7 @@ router.post('/chat', async (req, res) => {
   }
 
   let listArr = JSON.parse(listJson);
-
+  console.log(listArr);
   try {
     const openaiRes = await openai.createChatCompletion(
       {
@@ -58,7 +58,7 @@ router.post('/chat', async (req, res) => {
     let role = '';
     let content = '';
     openaiRes.data.on('data', (dataStr) => {
-
+      console.log(dataStr.toString());
       const arr = dataStr.toString().split('\n\n');
       for (let index = 0; index < arr.length; index++) {
         let element = arr[index];
