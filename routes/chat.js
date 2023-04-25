@@ -18,10 +18,7 @@ const openai = new OpenAIApi(config);
 router.post('/chat', async (req, res) => {
   const { messageUid } = req.header;
   let uid = messageUid || uuid();
-  res.set({
-    'Content-Type': 'text/event-stream',
-    messageUid: uid,
-  });
+
   const { message, ...config } = req.body;
   console.log('接收', message);
   if (message.content?.length > 700) {
@@ -77,6 +74,11 @@ router.post('/chat', async (req, res) => {
           const messageRole = _.get(obj, 'choices[0].delta.role');
           if (messageRole) {
             role = messageRole;
+            res.set({
+              'Content-Type': 'text/event-stream',
+              messageUid: uid,
+              role,
+            });
           }
           if (messageContent) {
             content += messageContent;
