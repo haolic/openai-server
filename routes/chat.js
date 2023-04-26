@@ -70,7 +70,7 @@ router.post('/chat', async (req, res) => {
           const obj = JSON.parse(element);
           const messageContent = _.get(obj, 'choices[0].delta.content');
           const messageRole = _.get(obj, 'choices[0].delta.role');
-          console.log(12345678)
+          console.log(12345678);
           console.log(messageContent);
           console.log(messageRole);
           if (messageRole) {
@@ -88,6 +88,9 @@ router.post('/chat', async (req, res) => {
         }
       }
     });
+    console.log(uid);
+    console.log(role);
+    console.log(content);
 
     await logMessage(uid, { role, content });
   } catch (e) {
