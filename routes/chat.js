@@ -63,20 +63,15 @@ router.post('/chat', async (req, res) => {
         let element = arr[index];
         if (element) {
           if (element === 'data: [DONE]') {
-            console.log(uid);
-            console.log(role);
-            console.log(content);
             logMessage(uid, { role, content });
             res.end('^d^o^n^e^');
             return;
           }
+
           element = element.replace('data: ', '');
           const obj = JSON.parse(element);
           const messageContent = _.get(obj, 'choices[0].delta.content');
           const messageRole = _.get(obj, 'choices[0].delta.role');
-          console.log(12345678);
-          console.log(messageContent);
-          console.log(messageRole);
           if (messageRole) {
             role = messageRole;
             res.set({
@@ -85,6 +80,7 @@ router.post('/chat', async (req, res) => {
               role,
             });
           }
+
           if (messageContent) {
             content += messageContent;
             res.write(messageContent);
