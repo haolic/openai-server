@@ -63,6 +63,10 @@ router.post('/chat', async (req, res) => {
         let element = arr[index];
         if (element) {
           if (element === 'data: [DONE]') {
+            console.log(uid);
+            console.log(role);
+            console.log(content);
+            logMessage(uid, { role, content });
             res.end('^d^o^n^e^');
             return;
           }
@@ -88,11 +92,6 @@ router.post('/chat', async (req, res) => {
         }
       }
     });
-    console.log(uid);
-    console.log(role);
-    console.log(content);
-
-    await logMessage(uid, { role, content });
   } catch (e) {
     log('system', '请求openai出错:', message.content);
     console.log(e);
