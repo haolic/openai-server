@@ -14,6 +14,7 @@ const config = new Configuration({
 const openai = new OpenAIApi(config);
 
 // let messageList = [];
+const signalMap = {};
 
 router.post('/chat', async (req, res) => {
   const { messageuid } = req.headers;
@@ -45,6 +46,7 @@ router.post('/chat', async (req, res) => {
 
   let listArr = JSON.parse(listJson);
   try {
+    const controller = new AbortController();
     const openaiRes = await openai.createChatCompletion(
       {
         model: 'gpt-3.5-turbo',
@@ -52,8 +54,9 @@ router.post('/chat', async (req, res) => {
         stream: true,
         ...config,
       },
-      { responseType: 'stream' },
+      { responseType: 'stream', signal: controller.signal },
     );
+    signalMap[uuid] = controller;
 
     let role = '';
     let content = '';
@@ -65,6 +68,7 @@ router.post('/chat', async (req, res) => {
           if (element === 'data: [DONE]') {
             logMessage(uid, { role, content });
             res.end('^d^o^n^e^');
+            delete signalMap[uuid];
             return;
           }
 
@@ -87,19 +91,6 @@ router.post('/chat', async (req, res) => {
           }
         }
       }
-    });
-
-    // 监听客户端断开连接事件
-    req.on('close', () => {
-      console.log('Client disconnected before complete.close');
-      logMessage(uid, { role, content });
-      res.end('^d^o^n^e^');
-    });
-
-    req.on('finish', () => {
-      console.log('Client disconnected before complete.finish');
-      logMessage(uid, { role, content });
-      res.end('^d^o^n^e^');
     });
   } catch (e) {
     log('system', '请求openai出错:', message.content);
@@ -127,6 +118,31 @@ router.get('/history', async (req, res) => {
   } catch (e) {
     console.log(e);
     res.end('[]');
+  }
+});
+
+router.get('/abort', async (req, res) => {
+  const { messageUid } = req.query;
+  try {
+    if (signalMap[messageUid]) {
+      signalMap[messageUid].abort();
+      delete signalMap[messageUid];
+      res.end(
+        JSON.stringify({
+          content: true,
+          error: false,
+          errorMsg: '',
+        }),
+      );
+    }
+  } catch (e) {
+    console.log(e);
+    res.end(
+      JSON.stringify({
+        error: true,
+        errorMsg: '停止对话失败',
+      }),
+    );
   }
 });
 
