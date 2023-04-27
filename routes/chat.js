@@ -55,7 +55,7 @@ router.post('/chat', async (req, res) => {
         stream: true,
         ...config,
       },
-      { responseType: 'stream', signal: signalMap[uuid] },
+      { responseType: 'stream', signal: signalMap[uuid].signal },
     );
     
 
