@@ -123,6 +123,8 @@ router.get('/history', async (req, res) => {
 
 router.get('/abort', async (req, res) => {
   const { messageUid } = req.query;
+  console.log('abort', messageUid);
+  console.log(signalMap[messageUid]);
   try {
     if (signalMap[messageUid]) {
       signalMap[messageUid].abort();
