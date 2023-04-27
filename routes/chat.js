@@ -47,6 +47,7 @@ router.post('/chat', async (req, res) => {
   let listArr = JSON.parse(listJson);
   try {
     const controller = new AbortController();
+    signalMap[uuid] = controller;
     const openaiRes = await openai.createChatCompletion(
       {
         model: 'gpt-3.5-turbo',
@@ -54,9 +55,9 @@ router.post('/chat', async (req, res) => {
         stream: true,
         ...config,
       },
-      { responseType: 'stream', signal: controller.signal },
+      { responseType: 'stream', signal: signalMap[uuid] },
     );
-    signalMap[uuid] = controller;
+    
 
     let role = '';
     let content = '';
