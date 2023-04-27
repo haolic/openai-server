@@ -15,13 +15,13 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // 临时解决跨域
-// app.all('*', function (req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Headers', '*');
-//   res.header('Content-Type', 'application/json;charset=utf-8');
-//   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-//   next();
-// });
+app.all('*', function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://xxx.cainiao.test:*');
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Content-Type', 'application/json;charset=utf-8');
+  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  next();
+});
 
 app.use('/api', chatRouter);
 app.use('/', indexRouter);
