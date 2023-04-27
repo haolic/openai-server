@@ -91,7 +91,13 @@ router.post('/chat', async (req, res) => {
 
     // 监听客户端断开连接事件
     req.on('close', () => {
-      console.log('Client disconnected before complete.');
+      console.log('Client disconnected before complete.close');
+      logMessage(uid, { role, content });
+      res.end('^d^o^n^e^');
+    });
+
+    req.on('finish', () => {
+      console.log('Client disconnected before complete.finish');
       logMessage(uid, { role, content });
       res.end('^d^o^n^e^');
     });
