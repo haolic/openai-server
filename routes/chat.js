@@ -13,9 +13,6 @@ const config = new Configuration({
 
 const openai = new OpenAIApi(config);
 
-// let messageList = [];
-const signalMap = {};
-
 router.post('/chat', async (req, res) => {
   const { messageuid } = req.headers;
   let uid = messageuid || uuid();
@@ -46,8 +43,6 @@ router.post('/chat', async (req, res) => {
 
   let listArr = JSON.parse(listJson);
   try {
-    const controller = new AbortController();
-    signalMap[uuid] = controller;
     const openaiRes = await openai.createChatCompletion(
       {
         model: 'gpt-3.5-turbo',
@@ -55,9 +50,8 @@ router.post('/chat', async (req, res) => {
         stream: true,
         ...config,
       },
-      { responseType: 'stream', signal: signalMap[uuid].signal },
+      { responseType: 'stream' },
     );
-    
 
     let role = '';
     let content = '';
@@ -69,7 +63,6 @@ router.post('/chat', async (req, res) => {
           if (element === 'data: [DONE]') {
             logMessage(uid, { role, content });
             res.end('^d^o^n^e^');
-            delete signalMap[uuid];
             return;
           }
 
@@ -119,33 +112,6 @@ router.get('/history', async (req, res) => {
   } catch (e) {
     console.log(e);
     res.end('[]');
-  }
-});
-
-router.get('/abort', async (req, res) => {
-  const { messageUid } = req.query;
-  console.log('abort', messageUid);
-  console.log(signalMap[messageUid]);
-  try {
-    if (signalMap[messageUid]) {
-      signalMap[messageUid].abort();
-      delete signalMap[messageUid];
-      res.end(
-        JSON.stringify({
-          content: true,
-          error: false,
-          errorMsg: '',
-        }),
-      );
-    }
-  } catch (e) {
-    console.log(e);
-    res.end(
-      JSON.stringify({
-        error: true,
-        errorMsg: '停止对话失败',
-      }),
-    );
   }
 });
 
