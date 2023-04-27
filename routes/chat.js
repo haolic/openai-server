@@ -88,6 +88,13 @@ router.post('/chat', async (req, res) => {
         }
       }
     });
+
+    // 监听客户端断开连接事件
+    req.on('close', () => {
+      console.log('Client disconnected before complete.');
+      logMessage(uid, { role, content });
+      res.end('^d^o^n^e^');
+    });
   } catch (e) {
     log('system', '请求openai出错:', message.content);
     console.log(e);
