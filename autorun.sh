@@ -1,1 +1,1 @@
-node /home/ubuntu/openai-server/app.js
+pm2 start node -- /home/ubuntu/openai-server/app.js
