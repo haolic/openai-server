@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const ejs = require('ejs');
 
 const indexRouter = require('./routes/index.js');
+const allHistory = require('./routes/all-history.js');
 const chatRouter = require('./routes/chat.js');
 
 const app = express();
@@ -24,6 +25,7 @@ app.all('*', function (req, res, next) {
 });
 
 app.use('/api', chatRouter);
+app.use('/api', allHistory);
 app.use('/', indexRouter);
 
 app.listen(3000, () => {
