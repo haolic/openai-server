@@ -3,7 +3,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 
-const indexRouter = require('./routes/index.js');
 const allHistory = require('./routes/all-history.js');
 const chatRouter = require('./routes/chat.js');
 
@@ -26,7 +25,13 @@ app.all('*', function (req, res, next) {
 
 app.use('/api', chatRouter);
 app.use('/api', allHistory);
-app.use('/', indexRouter);
+
+app.use((req, res) => {
+  if (!req.url.startsWith('/api')) {
+    res.type('html');
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  }
+});
 
 app.listen(3000, () => {
   console.log('Server started on port 3000');
