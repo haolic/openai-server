@@ -1,0 +1,1 @@
+node /home/ubuntu/openai-server/app.js
