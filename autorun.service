@@ -5,7 +5,7 @@ Wants=network.target network-online.target
 
 [Service]
 Type=simple
-
+# 路径要写需要执行的脚本路径
 ExecStart=bash /home/ubuntu/openai-server/autorun.sh
 Restart=always
 RestartSec=3
