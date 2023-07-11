@@ -45,7 +45,7 @@ router.post('/chat', async (req, res) => {
   try {
     const openaiRes = await openai.createChatCompletion(
       {
-        model: 'gpt-3.5-turbo-0613',
+        model: 'gpt-4',
         messages: listArr,
         stream: true,
         ...config,
