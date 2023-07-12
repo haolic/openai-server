@@ -18,7 +18,7 @@ router.post('/chat', async (req, res) => {
   let uid = messageuid || uuid();
 
   const { message, ...config } = req.body;
-  console.log('接收', message);
+  console.log('接收', message, process.env.OPENAI_API_KEY);
   if (message.content?.length > 700) {
     res.end(
       JSON.stringify({
