@@ -67,7 +67,7 @@ router.post('/chat', async (req, res) => {
               return;
             }
             element = element.replace('data: ', '');
-            const obj = JSON.parse(element);
+            const obj = JSON.parse(_.trim(element));
             const messageContent = _.get(obj, 'choices[0].delta.content');
             const messageRole = _.get(obj, 'choices[0].delta.role');
             if (messageRole) {
