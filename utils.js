@@ -1,5 +1,5 @@
 const { readFile, writeFile } = require('node:fs/promises');
-const { writeFile: writeFileFs } = require('fs');
+const { writeFile: writeFileFs, existsSync } = require('fs');
 const _ = require('lodash');
 const dayjs = require('dayjs');
 
@@ -20,7 +20,9 @@ const log = async (...text) => {
 };
 
 const logMessage = async (uid, message) => {
-  try {
+  console.log(uid, message);
+  if(existsSync(`./${messageHistoryDirStr}/${uid}.json`)) {
+    // 文件存在
     const contents = await readFile(`./${messageHistoryDirStr}/${uid}.json`, { encoding: 'utf8' });
     let list = JSON.parse(contents || '[]');
     list.push(message);
@@ -29,7 +31,8 @@ const logMessage = async (uid, message) => {
     await writeFile(`./${messageHistoryDirStr}/${uid}.json`, JSON.stringify(list), {
       encoding: 'utf8',
     });
-  } catch (err) {
+  } else {
+    // 文件不存在
     await writeFile(`./${messageHistoryDirStr}/${uid}.json`, JSON.stringify([message]), {
       encoding: 'utf8',
     });

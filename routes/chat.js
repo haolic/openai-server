@@ -63,7 +63,7 @@ router.post('/chat', async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Transfer-Encoding', 'chunked');
-    res.setHeader('Messageuid', uid);
+    res.setHeader('messageuid', uid);
 
     response.on('data', (data) => {
       try {
@@ -101,11 +101,11 @@ router.post('/chat', async (req, res) => {
 });
 
 router.get('/history', async (req, res) => {
-  const { messageUid } = req.query;
+  const { messageuid } = req.query;
   try {
-    if (messageUid) {
+    if (messageuid) {
       const list = await readFile(
-        path.join(__dirname, `../${messageHistoryDirStr}/${messageUid}.json`),
+        path.join(__dirname, `../${messageHistoryDirStr}/${messageuid}.json`),
       );
       res.end(list);
     } else {
