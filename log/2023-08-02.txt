@@ -1,0 +1,7 @@
+10:08:19 system 请求openai出错: inish_reason":null}]}
+
+j346iZwkUvI4jC3IXgYGHiG2sXQy","object":"chat.completion.chunk","created":1690970898,"model":"gpt-3.5-turbo-0613","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-7j346iZwkUvI4jC3IXgYGHiG2sXQy","object":"chat.completion.chunk","created":1690970898,"model":"gpt-3.5-turbo-0613","choices":[{"index":0,"delta":{"content":"非"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-7j346iZwkUvI4jC3IXgYGHiG2sXQy","object":"chat.completion.chunk","created":1690970898,"model":"gpt-3.5-turbo-0613","choices":[{"index":0,"delta":{"content":"常"},"f
