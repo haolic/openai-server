@@ -74,8 +74,9 @@ router.post('/chat', async (req, res) => {
             return str !== '[DONE]' && str !== '';
           })
           .forEach((item) => {
-            const jsonStr = item.trim();
-            const text = JSON.parse(jsonStr)?.choices[0]?.delta?.content || '';
+            const delta = JSON.parse(item.trim())?.choices[0]?.delta;
+            const text = delta?.content || '';
+            role = role || delta?.role || 'assistant';
             content += text;
             res.write(text);
             res.flushHeaders();
