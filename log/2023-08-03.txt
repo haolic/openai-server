@@ -1,0 +1,12 @@
+11:42:23 11:37:46 11:26:29 11:11:26 11:11:20 11:09:31 11:07:49 11:05:44 11:04:41 11:03:22 11:02:36 11:02:00 system 请求openai出错: nihaoo
+system 请求openai出错: nihao
+system 请求openai出错: nihao
+system 请求openai出错: nihao
+system 请求openai出错: nihao
+system 请求openai出错: nihao
+system 请求openai出错: nih
+system 请求openai出错: process.env变量怎么配置？
+system 请求openai出错: ？
+system 请求openai出错: ,.
+system 请求openai出错: ??
+system 请求openai出错: xx

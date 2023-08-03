@@ -6,6 +6,7 @@ const uuid = require('uuid').v4;
 const _ = require('lodash');
 const router = express.Router();
 const { log, logMessage, messageHistoryDirStr } = require('../utils.js');
+const models = require('../constants.js');
 
 const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -45,54 +46,54 @@ router.post('/chat', async (req, res) => {
   try {
     const openaiRes = await openai.createChatCompletion(
       {
-        model: 'gpt-3.5-turbo',
-        messages: _.takeRight(listArr, 15),
+        model: models['GPT3.5-16k'],
+        messages: _.takeRight(listArr, 20),
         stream: true,
         ...config,
       },
       { responseType: 'stream' },
     );
-
+      
+    const response = openaiRes.data;
+    
     let role = '';
     let content = '';
-    openaiRes.data.on('data', (dataStr) => {
+    // 设置响应的 Content-Type 为 text/event-stream
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Transfer-Encoding', 'chunked');
+
+    response.on('data', (data) => {
       try {
-        const arr = dataStr.toString().split('\n\n');
-        for (let index = 0; index < arr.length; index++) {
-          let element = arr[index];
-          if (element) {
-            if (element === 'data: [DONE]') {
-              logMessage(uid, { role, content });
-              res.end('');
-              return;
-            }
-            element = element.replace('data: ', '');
-            const obj = JSON.parse(_.trim(element));
-            const messageContent = _.get(obj, 'choices[0].delta.content');
-            const messageRole = _.get(obj, 'choices[0].delta.role');
-            if (messageRole) {
-              role = messageRole;
-              res.set({
-                'Content-Type': 'text/event-stream',
-                messageUid: uid,
-                role,
-              });
-            }
-            if (messageContent) {
-              content += messageContent;
-              res.write(messageContent);
-            }
-          }
-        }
-      } catch (e) {
+        data
+          .toString()
+          .split('data: ')
+          .filter((item) => {
+            const str = item.trim();
+            return str !== '[DONE]' && str !== '';
+          })
+          .forEach((item) => {
+            const jsonStr = item.trim();
+            const text = JSON.parse(jsonStr)?.choices[0]?.delta?.content || '';
+            content += text;
+            res.write(text);
+            res.flushHeaders();
+          });
+      } catch (err) {
         log('system', '请求openai出错:', dataStr.toString());
         console.log('err', dataStr.toString());
         res.end(dataStr.toString());
       }
     });
+
+    response.on('end', () => {
+      logMessage(uid, { role, content });
+      res.end('');
+    });
   } catch (e) {
     log('system', '请求openai出错:', message.content);
-    console.log(e);
+    console.log(e.toJSON());
     res.end('请求openai出错');
   }
 });
