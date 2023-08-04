@@ -30,7 +30,7 @@ router.post('/image', async (req, res) => {
          * @type {string}
          * @memberof CreateImageRequest
          */
-        prompt: message.content,
+        prompt: message,
         /**
          * The number of images to generate. Must be between 1 and 10.
          * @type {number}
