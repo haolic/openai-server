@@ -51,8 +51,8 @@ router.post('/image', async (req, res) => {
         response_format: 'b64_json',
       },
     );
-    console.log(JSON.stringify(openaiRes.data));
-    res.end(JSON.stringify(openaiRes.data));
+    // console.log(JSON.stringify(openaiRes.data));
+    res.end(JSON.stringify({data: response.data.data}));
 
   } catch (e) {
     log('system-image', '请求openai出错:', message.content);
