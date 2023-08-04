@@ -13,6 +13,7 @@ module.exports = { openai };
 
 const allHistory = require('./routes/all-history.js');
 const chatRouter = require('./routes/chat.js');
+const imageRouter = require('./routes/image.js');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.all('*', function (req, res, next) {
 
 app.use('/api', chatRouter);
 app.use('/api', allHistory);
+app.use('/api', imageRouter);
 
 app.use((req, res) => {
   if (!req.url.startsWith('/api')) {
