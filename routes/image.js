@@ -52,7 +52,7 @@ router.post('/image', async (req, res) => {
       },
     );
     console.log(JSON.stringify(openaiRes.data));
-    res.end(JSON.stringify({data: response.data.data}));
+    res.end(JSON.stringify(openaiRes.data));
 
   } catch (e) {
     log('system-image', '请求openai出错:', message.content);
