@@ -1,18 +1,12 @@
 const express = require('express');
 const { readFile } = require('node:fs/promises');
-const { OpenAIApi, Configuration } = require('openai');
 const path = require('path');
 const uuid = require('uuid').v4;
 const _ = require('lodash');
 const router = express.Router();
 const { log, logMessage, messageHistoryDirStr } = require('../utils.js');
 const models = require('../constants.js');
-
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(config);
+const { openai } = require('../app.js');
 
 router.post('/chat', async (req, res) => {
   const { messageuid } = req.headers;
@@ -53,9 +47,9 @@ router.post('/chat', async (req, res) => {
       },
       { responseType: 'stream' },
     );
-      
+
     const response = openaiRes.data;
-    
+
     let role = '';
     let content = '';
     // 设置响应的 Content-Type 为 text/event-stream

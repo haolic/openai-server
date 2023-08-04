@@ -2,6 +2,14 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
+const { OpenAIApi, Configuration } = require('openai');
+
+const config = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(config);
+module.exports = { openai };
 
 const allHistory = require('./routes/all-history.js');
 const chatRouter = require('./routes/chat.js');
