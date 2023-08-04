@@ -53,8 +53,8 @@ router.post('/image', async (req, res) => {
         response_format: 'b64_json',
       },
     );
-    console.log(openaiRes);
-    res.end(openaiRes.data.data);
+    console.log(JSON.stringify(openaiRes.data));
+    res.end(JSON.stringify(openaiRes.data));
 
     logMessage(uid, openaiRes.data.data.join(','), imageHistoryDirStr);
   } catch (e) {
