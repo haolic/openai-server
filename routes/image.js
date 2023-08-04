@@ -22,8 +22,6 @@ router.post('/image', async (req, res) => {
     return;
   }
 
-  await logMessage(uid, message, imageHistoryDirStr);
-
   try {
     const openaiRes = await openai.createImage(
       {
@@ -56,7 +54,6 @@ router.post('/image', async (req, res) => {
     console.log(JSON.stringify(openaiRes.data));
     res.end(JSON.stringify(openaiRes.data));
 
-    logMessage(uid, openaiRes.data.data.join(','), imageHistoryDirStr);
   } catch (e) {
     log('system-image', '请求openai出错:', message.content);
     console.log(e.toJSON());
