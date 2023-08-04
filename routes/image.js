@@ -48,7 +48,7 @@ router.post('/image', async (req, res) => {
          * @type {string}
          * @memberof CreateImageRequest
          */
-        response_format: 'b64_json',
+        response_format: 'url',
       },
     );
     // console.log(JSON.stringify(openaiRes.data));
@@ -56,7 +56,7 @@ router.post('/image', async (req, res) => {
 
   } catch (e) {
     log('system-image', '请求openai出错:', message.content);
-    console.log(e.toJSON());
+    // console.log(e.toJSON());
     res.end(
       JSON.stringify({
         error: true,
