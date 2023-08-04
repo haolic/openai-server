@@ -51,7 +51,7 @@ router.post('/image', async (req, res) => {
         response_format: 'url',
       },
     );
-    // console.log(JSON.stringify(openaiRes.data));
+    console.log(JSON.stringify(openaiRes.data));
     res.end(JSON.stringify({data: response.data.data}));
 
   } catch (e) {
