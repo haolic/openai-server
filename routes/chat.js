@@ -40,7 +40,7 @@ router.post('/chat', async (req, res) => {
   try {
     const openaiRes = await openai.createChatCompletion(
       {
-        model: models.GPT4,
+        model: models['GPT3.5-16k'],
         messages: _.takeRight(listArr, 20),
         stream: true,
         ...config,
