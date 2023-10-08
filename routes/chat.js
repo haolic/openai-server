@@ -14,12 +14,12 @@ router.post('/chat', async (req, res) => {
 
   const { message, ...config } = req.body;
   console.log('接收', message, process.env.OPENAI_API_KEY);
-  if (message.content?.length > 700) {
+  if (message.content?.length > 7000) {
     res.end(
       JSON.stringify({
         error: true,
-        errorMsg: '发送字数不能超700。',
-        errorContent: '发送字数不能超700',
+        errorMsg: '发送字数不能超7000。',
+        errorContent: '发送字数不能超7000',
       }),
     );
     return;
