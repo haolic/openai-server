@@ -26,7 +26,8 @@ const logMessage = async (uid, message, dir) => {
     // 文件存在
     const contents = await readFile(`./${dir || messageHistoryDirStr}/${uid}.json`, { encoding: 'utf8' });
     let list = JSON.parse(contents || '[]');
-    list.push(message);
+    list.push({...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss')});
+
     list = _.takeRight(list, 500);
 
     await writeFile(`./${dir || messageHistoryDirStr}/${uid}.json`, JSON.stringify(list), {
@@ -34,7 +35,7 @@ const logMessage = async (uid, message, dir) => {
     });
   } else {
     // 文件不存在
-    await writeFile(`./${dir || messageHistoryDirStr}/${uid}.json`, JSON.stringify([message]), {
+    await writeFile(`./${dir || messageHistoryDirStr}/${uid}.json`, JSON.stringify([{...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss')}]), {
       encoding: 'utf8',
     });
   }
