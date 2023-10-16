@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 const { messageHistoryDirStr } = require('../utils.js');
+const dayjs = require('dayjs');
 
 router.get('/history-list', async (req, res) => {
   try {
@@ -39,7 +40,14 @@ router.get('/history-list', async (req, res) => {
         }
         return prev;
       }, []);
-      res.end(JSON.stringify(allHistory));
+
+      res.end(
+        JSON.stringify(
+          allHistory.sort((a, b) => {
+            return dayjs(a.time).isBefore(dayjs(b.time)) ? 1 : -1;
+          }),
+        ),
+      );
     });
   } catch (e) {
     console.log(e);
