@@ -8,92 +8,6 @@ const { log, logMessage, messageHistoryDirStr } = require('../utils.js');
 const models = require('../constants.js');
 const { openai } = require('../app.js');
 
-router.post('/chat', async (req, res) => {
-  const { messageuid } = req.headers;
-  let uid = messageuid || uuid();
-
-  const { message, ...config } = req.body;
-  console.log('接收', message, process.env.OPENAI_API_KEY);
-  if (message.content?.length > 7000) {
-    res.end(
-      JSON.stringify({
-        error: true,
-        errorMsg: '发送字数不能超7000。',
-        errorContent: '发送字数不能超7000',
-      }),
-    );
-    return;
-  }
-
-  await logMessage(uid, message);
-
-  let listJson = '[]';
-  try {
-    listJson = await readFile(path.join(__dirname, `../${messageHistoryDirStr}/${uid}.json`), {
-      encoding: 'utf8',
-    });
-  } catch (e) {
-    console.log('listJson', e);
-  }
-
-  let listArr = JSON.parse(listJson);
-  try {
-    const openaiRes = await openai.createChatCompletion(
-      {
-        model: models.GPT4,
-        messages: _.takeRight(listArr, 12),
-        stream: true,
-        ...config,
-      },
-      { responseType: 'stream' },
-    );
-
-    const response = openaiRes.data;
-
-    let role = '';
-    let content = '';
-    // 设置响应的 Content-Type 为 text/event-stream
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Transfer-Encoding', 'chunked');
-    res.setHeader('messageuid', uid);
-
-    response.on('data', (data) => {
-      try {
-        data
-          .toString()
-          .split('data: ')
-          .filter((item) => {
-            const str = item.trim();
-            return str !== '[DONE]' && str !== '';
-          })
-          .forEach((item) => {
-            const delta = JSON.parse(item.trim())?.choices[0]?.delta;
-            const text = delta?.content || '';
-            role = role || delta?.role || 'assistant';
-            content += text;
-            res.write(text);
-            res.flushHeaders();
-          });
-      } catch (err) {
-        log('system', '请求openai出错:', dataStr.toString());
-        console.log('err', dataStr.toString());
-        res.end(dataStr.toString());
-      }
-    });
-
-    response.on('end', () => {
-      logMessage(uid, { role, content });
-      res.end('');
-    });
-  } catch (e) {
-    log('system', '请求openai出错:', message.content);
-    console.log(e.toJSON());
-    res.end('请求openai出错');
-  }
-});
-
 router.post('/chat-string', async (req, res) => {
   const { messageuid } = req.headers;
   let uid = messageuid || uuid();
@@ -127,7 +41,13 @@ router.post('/chat-string', async (req, res) => {
     const openaiRes = await openai.createChatCompletion(
       {
         model: models.GPT4,
-        messages: _.takeRight(listArr, 12),
+        messages: _.takeRight(
+          listArr.map((el) => {
+            const { time, ...rest } = el;
+            return rest;
+          }),
+          12,
+        ),
         stream: true,
         ...config,
       },
