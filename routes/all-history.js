@@ -44,7 +44,7 @@ router.get('/history-list', async (req, res) => {
       res.end(
         JSON.stringify(
           allHistory.sort((a, b) => {
-            return dayjs(a.time).isBefore(dayjs(b.time)) ? 1 : -1;
+            return dayjs(a?.[0]?.time).isBefore(dayjs(b?.[0]?.time)) ? 1 : -1;
           }),
         ),
       );
