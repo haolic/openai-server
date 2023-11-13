@@ -83,6 +83,7 @@ router.post('/chat-string', async (req, res) => {
             res.flushHeaders();
           });
       } catch (err) {
+        console.log(err);
         log('system', '请求openai出错:', dataStr.toString());
         console.log('err', dataStr.toString());
         res.end(dataStr.toString());
