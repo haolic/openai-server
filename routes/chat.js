@@ -54,51 +54,46 @@ router.post('/chat-string', async (req, res) => {
       { responseType: 'stream' },
     );
 
-    const response = openaiRes.data;
-
     let role = '';
     let content = '';
     // 设置响应的 Content-Type 为 text/event-stream
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Transfer-Encoding', 'chunked');
-    res.setHeader('messageuid', uid);
 
-    response.on('data', (data) => {
-      try {
-        res.write(data.toString());
-        data
-          .toString()
-          .split('data: ')
-          .filter((item) => {
-            const str = item.trim();
-            return str !== '[DONE]' && str !== '';
-          })
-          .forEach((item) => {
-            console.log(123, item);
-            const delta = JSON.parse(item.trim())?.choices[0]?.delta;
-            const text = delta?.content || '';
-            role = role || delta?.role || 'assistant';
-            content += text;
-            res.flushHeaders();
-          });
-      } catch (err) {
-        console.log(err);
-        log('system', '请求openai出错:', data.toString());
-        console.log('err', data.toString());
-        res.end('请求openai出错。');
+    res.setHeader('messageuid', uid);
+    openaiRes.data.on('data', (chunk) => {
+      const lines = chunk
+        .toString()
+        .split('\n')
+        .filter((line) => line.trim() !== '');
+      for (const line of lines) {
+        const message = line.replace(/^data: /, '');
+        if (message === '[DONE]') {
+          logMessage(uid, { role, content });
+          res.end('data: [DONE]\n\n');
+          return; // Stream finished
+        }
+        try {
+          const parsed = JSON.parse(message);
+          const text = parsed.choices[0].delta.content || '';
+          content += text;
+          res.write(`data: ${text}\n\n`); // Send SSE message to the browser client
+        } catch (error) {
+          log('Could not JSON parse stream message');
+          console.log('Could not JSON parse stream message', message, error);
+        }
       }
     });
 
-    response.on('end', () => {
+    openaiRes.data.on('end', () => {
       logMessage(uid, { role, content });
       res.write('event: end');
       res.end();
     });
   } catch (e) {
     log('system', '请求openai出错:', message.content);
-    console.log(e.toJSON());
+    console.log(e);
     res.end('请求openai出错');
   }
 });
