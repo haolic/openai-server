@@ -11,7 +11,7 @@ const dayjs = require('dayjs');
 
 router.post('/chat-string', async (req, res) => {
   const { messageuid } = req.headers;
-  let uid = messageuid || `${dayjs().format('YYYYMMDDHHmmss')}__${uuid()}`;
+  let uid = messageuid || `${dayjs.utc().add(8, 'hours').format('YYYYMMDDHHmmss')}__${uuid()}`;
 
   const { message, ...config } = req.body;
   console.log('接收', message, process.env.OPENAI_API_KEY);

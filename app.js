@@ -2,6 +2,11 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+
+dayjs.extend(utc);
+
 const { OpenAIApi, Configuration } = require('openai');
 
 const config = new Configuration({

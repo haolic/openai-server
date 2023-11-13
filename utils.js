@@ -7,15 +7,18 @@ const messageHistoryDirStr = 'message-history';
 const imageHistoryDirStr = 'image-history';
 
 const log = async (...text) => {
-  const today = dayjs().format('YYYY-MM-DD');
+  const today = dayjs.utc().add(8, 'hours').format('YYYY-MM-DD');
   try {
     const contents = await readFile(`./log/${today}.txt`, { encoding: 'utf8' });
     await writeFile(
       `./log/${today}.txt`,
-      `${dayjs().format('HH:mm:ss')} ${contents}\n${text.join(' ')}`,
+      `${dayjs.utc().add(8, 'hours').format('HH:mm:ss')} ${contents}\n${text.join(' ')}`,
     );
   } catch (err) {
-    writeFile(`./log/${today}.txt`, `${dayjs().format('HH:mm:ss')} ${text.join(' ')}`);
+    writeFile(
+      `./log/${today}.txt`,
+      `${dayjs.utc().add(8, 'hours').format('HH:mm:ss')} ${text.join(' ')}`,
+    );
     console.error(err.message);
   }
 };
@@ -33,7 +36,7 @@ const updateMessage = async (uid, message, dir) => {
     if (lastMessage.role === ROLEMAP.ASSISTANT) {
       lastMessage.content = message.content;
     } else {
-      list.push({ ...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss') });
+      list.push({ ...message, time: dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') });
     }
 
     list = _.takeRight(list, 500);
@@ -45,7 +48,9 @@ const updateMessage = async (uid, message, dir) => {
     // 文件不存在
     await writeFile(
       `./${dir || messageHistoryDirStr}/${uid}.json`,
-      JSON.stringify([{ ...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }]),
+      JSON.stringify([
+        { ...message, time: dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') },
+      ]),
       {
         encoding: 'utf8',
       },
@@ -61,7 +66,7 @@ const logMessage = async (uid, message, dir) => {
       encoding: 'utf8',
     });
     let list = JSON.parse(contents || '[]');
-    list.push({ ...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss') });
+    list.push({ ...message, time: dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') });
 
     list = _.takeRight(list, 500);
 
@@ -72,7 +77,9 @@ const logMessage = async (uid, message, dir) => {
     // 文件不存在
     await writeFile(
       `./${dir || messageHistoryDirStr}/${uid}.json`,
-      JSON.stringify([{ ...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }]),
+      JSON.stringify([
+        { ...message, time: dayjs.utc().add(8, 'hours').format('YYYY-MM-DD HH:mm:ss') },
+      ]),
       {
         encoding: 'utf8',
       },
