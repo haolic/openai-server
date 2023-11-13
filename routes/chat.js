@@ -76,6 +76,7 @@ router.post('/chat-string', async (req, res) => {
             return str !== '[DONE]' && str !== '';
           })
           .forEach((item) => {
+            console.log(123, item);
             const delta = JSON.parse(item.trim())?.choices[0]?.delta;
             const text = delta?.content || '';
             role = role || delta?.role || 'assistant';
@@ -86,7 +87,7 @@ router.post('/chat-string', async (req, res) => {
         console.log(err);
         log('system', '请求openai出错:', data.toString());
         console.log('err', data.toString());
-        res.end(data.toString());
+        res.end('请求openai出错。');
       }
     });
 
