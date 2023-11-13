@@ -4,13 +4,14 @@ const path = require('path');
 const uuid = require('uuid').v4;
 const _ = require('lodash');
 const router = express.Router();
-const { log, logMessage, messageHistoryDirStr } = require('../utils.js');
+const { log, updateMessage, logMessage, messageHistoryDirStr, ROLEMAP } = require('../utils.js');
 const models = require('../constants.js');
 const { openai } = require('../app.js');
+const dayjs = require('dayjs');
 
 router.post('/chat-string', async (req, res) => {
   const { messageuid } = req.headers;
-  let uid = messageuid || uuid();
+  let uid = messageuid || `${dayjs().format('YYYYMMDDHHmmss')}__${uuid()}`;
 
   const { message, ...config } = req.body;
   console.log('接收', message, process.env.OPENAI_API_KEY);
@@ -54,7 +55,6 @@ router.post('/chat-string', async (req, res) => {
       { responseType: 'stream' },
     );
 
-    let role = '';
     let content = '';
     // 设置响应的 Content-Type 为 text/event-stream
     res.setHeader('Content-Type', 'text/event-stream');
@@ -70,7 +70,6 @@ router.post('/chat-string', async (req, res) => {
       for (const line of lines) {
         const message = line.replace(/^data: /, '');
         if (message === '[DONE]') {
-          logMessage(uid, { role, content });
           res.end('data: [DONE]\n\n');
           return; // Stream finished
         }
@@ -78,6 +77,7 @@ router.post('/chat-string', async (req, res) => {
           const parsed = JSON.parse(message);
           const text = parsed.choices[0].delta.content || '';
           content += text;
+          updateMessage(uid, { role: ROLEMAP.ASSISTANT, content });
           res.write(`data: ${text}\n\n`); // Send SSE message to the browser client
         } catch (error) {
           log('Could not JSON parse stream message');
@@ -87,9 +87,15 @@ router.post('/chat-string', async (req, res) => {
     });
 
     openaiRes.data.on('end', () => {
-      logMessage(uid, { role, content });
       res.write('event: end');
       res.end();
+    });
+
+    // 前端关闭连接
+    req.on('close', () => {
+      console.log('前端关闭连接', message.content);
+      log('system', '前端关闭连接', message.content);
+      openaiRes.data.destroy();
     });
   } catch (e) {
     log('system', '请求openai出错:', message.content);

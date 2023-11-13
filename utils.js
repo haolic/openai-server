@@ -20,13 +20,21 @@ const log = async (...text) => {
   }
 };
 
-const logMessage = async (uid, message, dir) => {
-  console.log(uid, message, dir);
-  if(existsSync(`./${dir || messageHistoryDirStr}/${uid}.json`)) {
+// 更新正在返回中的message
+const updateMessage = async (uid, message, dir) => {
+  if (existsSync(`./${dir || messageHistoryDirStr}/${uid}.json`)) {
     // 文件存在
-    const contents = await readFile(`./${dir || messageHistoryDirStr}/${uid}.json`, { encoding: 'utf8' });
+    const contents = await readFile(`./${dir || messageHistoryDirStr}/${uid}.json`, {
+      encoding: 'utf8',
+    });
     let list = JSON.parse(contents || '[]');
-    list.push({...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss')});
+    // 判断最后一条消息
+    const lastMessage = list[list.length - 1];
+    if (lastMessage.role === ROLEMAP.ASSISTANT) {
+      lastMessage.content = message.content;
+    } else {
+      list.push({ ...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss') });
+    }
 
     list = _.takeRight(list, 500);
 
@@ -35,10 +43,53 @@ const logMessage = async (uid, message, dir) => {
     });
   } else {
     // 文件不存在
-    await writeFile(`./${dir || messageHistoryDirStr}/${uid}.json`, JSON.stringify([{...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss')}]), {
-      encoding: 'utf8',
-    });
+    await writeFile(
+      `./${dir || messageHistoryDirStr}/${uid}.json`,
+      JSON.stringify([{ ...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }]),
+      {
+        encoding: 'utf8',
+      },
+    );
   }
 };
 
-module.exports = { log, logMessage, messageHistoryDirStr, imageHistoryDirStr };
+const logMessage = async (uid, message, dir) => {
+  console.log(uid, message, dir);
+  if (existsSync(`./${dir || messageHistoryDirStr}/${uid}.json`)) {
+    // 文件存在
+    const contents = await readFile(`./${dir || messageHistoryDirStr}/${uid}.json`, {
+      encoding: 'utf8',
+    });
+    let list = JSON.parse(contents || '[]');
+    list.push({ ...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss') });
+
+    list = _.takeRight(list, 500);
+
+    await writeFile(`./${dir || messageHistoryDirStr}/${uid}.json`, JSON.stringify(list), {
+      encoding: 'utf8',
+    });
+  } else {
+    // 文件不存在
+    await writeFile(
+      `./${dir || messageHistoryDirStr}/${uid}.json`,
+      JSON.stringify([{ ...message, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }]),
+      {
+        encoding: 'utf8',
+      },
+    );
+  }
+};
+
+const ROLEMAP = {
+  USER: 'user',
+  ASSISTANT: 'assistant',
+};
+
+module.exports = {
+  log,
+  logMessage,
+  updateMessage,
+  messageHistoryDirStr,
+  imageHistoryDirStr,
+  ROLEMAP,
+};
