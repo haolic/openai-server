@@ -78,7 +78,7 @@ router.post('/chat-string', async (req, res) => {
           const text = parsed.choices[0].delta.content || '';
           content += text;
           updateMessage(uid, { role: ROLEMAP.ASSISTANT, content });
-          res.write(`data: ${text}\n\n`); // Send SSE message to the browser client
+          res.write(`data: ${JSON.stringify({ data: text })}\n\n`); // Send SSE message to the browser client
         } catch (error) {
           log('Could not JSON parse stream message');
           console.log('Could not JSON parse stream message', message, error);

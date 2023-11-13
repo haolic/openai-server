@@ -66,4 +66,29 @@ router.get('/history-list', async (req, res) => {
   }
 });
 
+router.post('/delete-history', async (req, res) => {
+  try {
+    const { uid } = req.body;
+    // 根据uid删除历史纪录
+    const directoryPath = path.join(__dirname, `../${messageHistoryDirStr}`);
+    const filePath = path.join(directoryPath, `${uid}.json`);
+    fs.unlinkSync(filePath);
+
+    res.end(
+      JSON.stringify({
+        error: false,
+        errorMsg: '删除成功',
+        errorContent: '删除成功',
+      }),
+    );
+  } catch (e) {
+    console.log(e);
+    res.end(JSON.stringify({
+      error: true,
+      errorMsg: '删除失败',
+      errorContent: '删除失败',
+    }));
+  }
+});
+
 module.exports = router;
