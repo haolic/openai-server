@@ -84,15 +84,15 @@ router.post('/chat-string', async (req, res) => {
           });
       } catch (err) {
         console.log(err);
-        log('system', '请求openai出错:', dataStr.toString());
-        console.log('err', dataStr.toString());
-        res.end(dataStr.toString());
+        log('system', '请求openai出错:', data.toString());
+        console.log('err', data.toString());
+        res.end(data.toString());
       }
     });
 
     response.on('end', () => {
       logMessage(uid, { role, content });
-      res.write(`event: end`);
+      res.write('event: end');
       res.end();
     });
   } catch (e) {
