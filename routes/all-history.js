@@ -44,7 +44,14 @@ router.get('/history-list', async (req, res) => {
       res.end(
         JSON.stringify(
           allHistory.sort((a, b) => {
-            return dayjs(a?.[0]?.time).isBefore(dayjs(b?.[0]?.time)) ? 1 : -1;
+            // 根据a,b中的最后一条消息的time排序
+            const { content: contentA } = a;
+            const { content: contentB } = b;
+
+            const lasta = contentA[contentA.length - 1];
+            const lastb = contentB[contentB.length - 1];
+
+            return dayjs(lasta.time).isBefore(dayjs(lastb.time)) ? 1 : -1;
           }),
         ),
       );
