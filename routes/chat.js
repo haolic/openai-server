@@ -71,13 +71,13 @@ router.post('/chat-string', async (req, res) => {
         const message = line.replace(/^data: /, '');
         if (message === '[DONE]') {
           res.end('data: [DONE]\n\n');
+          updateMessage(uid, { role: ROLEMAP.ASSISTANT, content });
           return; // Stream finished
         }
         try {
           const parsed = JSON.parse(message);
           const text = parsed.choices[0].delta.content || '';
           content += text;
-          updateMessage(uid, { role: ROLEMAP.ASSISTANT, content });
           res.write(`data: ${JSON.stringify({ data: text })}\n\n`); // Send SSE message to the browser client
         } catch (error) {
           log('Could not JSON parse stream message');
