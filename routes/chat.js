@@ -41,7 +41,7 @@ router.post('/chat-string', async (req, res) => {
   try {
     const openaiRes = await openai.createChatCompletion(
       {
-        model: models.GPT4Turbo,
+        model: models.GPT4,
         messages: _.takeRight(
           listArr.map((el) => {
             const { time, ...rest } = el;
